@@ -9,6 +9,6 @@ job_agent = Agent(
 )
 crawler = Crawler()
 
-for page in crawler.crawl():
-    result = job_agent.extract_jobs(page)
+for url ,page_body in crawler.crawl():
+    result = job_agent.extract_jobs(page_body)
     pprint(result)
