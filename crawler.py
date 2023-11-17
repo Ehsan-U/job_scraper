@@ -6,14 +6,30 @@ from lxml.html import fromstring
 from typing import Literal
 
 
+
 class Crawler:
 
     def __init__(self, browser: Literal["chrome", "firefox"] = "chrome"):
+        """
+        Initializes a new instance of the Crawler class.
+
+        Args:
+            browser: The browser to mimic TLS fingerprints. Defaults to "chrome".
+        """
         self.session = hrequests.Session(browser=browser)
 
 
     def clean(self, response: Response) -> str:
-        if response.status_code == 200:
+        """
+        Cleans the HTML content of a response object by removing unwanted tags.
+
+        Args:
+            response: The response object containing the HTML content to be cleaned.
+
+        Returns:
+            str: The cleaned text content of the HTML.
+        """
+        if response and response.status_code == 200:
             html = fromstring(response.text)
 
             cleaner = Cleaner()
@@ -33,15 +49,28 @@ class Crawler:
 
     @retry(wait=wait_exponential(multiplier=1, min=4, max=10))
     def fetch(self, url: str) -> Response:
+        """
+        Fetches the content of the given URL using the session object.
+
+        Args:
+            url: The URL to fetch.
+
+        Returns:
+            Response: The response object returned by the server.
+        """
         try:
             response = self.session.get(url)
             return response
         except Exception as e:
             raise e
-        return Response(status_code=404)
 
 
     def crawl(self):
+        """
+        Crawls a list of URLs and yields the cleaned response body for each URL.
+
+        :return: A generator that yields the cleaned response body for each URL.
+        """
         urls = ["https://www.ppsc.gop.pk/Jobs.aspx", "https://www.flexcoaches.com/vacature/productiemedewerker-7/", "https://tech4you.nl/vacatures/"]
         for url in urls:
             response = self.fetch(url)

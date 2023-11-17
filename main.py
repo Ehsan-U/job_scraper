@@ -8,6 +8,7 @@ job_agent = Agent(
     organization="org-8Y92VdA7tV3akhIJIG5eFOI4",
 )
 crawler = Crawler()
+
 for page in crawler.crawl():
     result = job_agent.extract_jobs(page)
     pprint(result)
