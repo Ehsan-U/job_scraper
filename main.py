@@ -9,6 +9,7 @@ job_agent = Agent(
 )
 crawler = Crawler()
 
-for url ,page_body in crawler.crawl():
+websites = ["https://www.flexcoaches.com/vacature/productiemedewerker-7/"]
+for url ,page_body in crawler.crawl(websites):
     result = job_agent.extract_jobs(page_body)
     pprint(result)

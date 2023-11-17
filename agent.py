@@ -16,9 +16,9 @@ class Agent:
         "properties": {
             "job_title": {"type": "string"},
             "job_description": {"type": "string"},
-            "job_page_url": {"type": "string"}
+            "job_detail_page_url": {"type": "string"}
         },
-        "required": ["job_title", "job_description"],
+        "required": ["job_title", "job_description", "job_detail_page_url"],
     }
 
 

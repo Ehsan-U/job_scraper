@@ -1,22 +1,30 @@
-import hrequests
 from tenacity import wait_exponential, retry
-from hrequests import Response
 from lxml.html.clean import Cleaner
 from lxml.html import fromstring, tostring
-from typing import Literal
+from playwright.sync_api import sync_playwright
+from dataclasses import dataclass
+
+from logger import logger
+
+
+@dataclass
+class Response:
+    status_code: int
+    text: str
 
 
 
 class Crawler:
 
-    def __init__(self, browser: Literal["chrome", "firefox"] = "chrome"):
+    def __init__(self, headless: bool = True, timeout: int = 10):
         """
         Initializes a new instance of the Crawler class.
 
         Args:
-            browser: The browser to mimic TLS fingerprints. Defaults to "chrome".
+            browser: The browser to mimic TLS fingerprints. Defaults to "firefox".
         """
-        self.session = hrequests.Session(browser=browser)
+        self.timeout = timeout * 1000
+        self.headless = headless
 
 
     def clean(self, response: Response) -> str:
@@ -29,7 +37,7 @@ class Crawler:
         Returns:
             str: The cleaned text content of the HTML.
         """
-        if response and response.status_code == 200:
+        if response:
             html = fromstring(response.text)
 
             cleaner = Cleaner()
@@ -62,20 +70,24 @@ class Crawler:
             Response: The response object returned by the server.
         """
         try:
-            response = self.session.get(url)
-            return response
+            with sync_playwright() as play:
+                page = play.firefox.launch(headless=self.headless).new_page()
+                page.route("**/*", lambda route: route.abort() if route.request.resource_type == "image"  else route.continue_())
+                page.goto(url, timeout=self.timeout)
+                content = page.content()
+            return Response(status_code=200, text=content)
         except Exception as e:
             raise e
 
 
-    def crawl(self):
+    def crawl(self, urls):
         """
         Crawls a list of URLs and yields the cleaned response body for each URL.
 
         :return: A generator that yields the cleaned response body for each URL.
         """
-        urls = ["https://tech4you.nl/vacatures/", "https://www.flexcoaches.com/vacature/productiemedewerker-7/"]
         for url in urls:
+            logger.info(f"Processing: {url}")
             response = self.fetch(url)
             body = self.clean(response)
             yield url, body
