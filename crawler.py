@@ -2,7 +2,7 @@ import hrequests
 from tenacity import wait_exponential, retry
 from hrequests import Response
 from lxml.html.clean import Cleaner
-from lxml.html import fromstring, tostring
+from lxml.html import fromstring
 from typing import Literal
 
 
@@ -25,11 +25,8 @@ class Crawler:
 
             html = cleaner.clean_html(html)
 
-            body_elements = html.xpath("//body")
-            if body_elements:
-                return tostring(body_elements[0], method="html", encoding="unicode", pretty_print=True)
-            else:
-                return ""
+            text = " ".join(html.xpath("//body//text()")).strip()
+            return text
         else:
             return ""
 
@@ -45,7 +42,7 @@ class Crawler:
 
 
     def crawl(self):
-        urls = ["https://tech4you.nl/vacatures/"]
+        urls = ["https://www.ppsc.gop.pk/Jobs.aspx", "https://www.flexcoaches.com/vacature/productiemedewerker-7/", "https://tech4you.nl/vacatures/"]
         for url in urls:
             response = self.fetch(url)
             body = self.clean(response)

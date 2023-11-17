@@ -1,9 +1,5 @@
-import json
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain, create_extraction_chain
-from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
-from langchain.pydantic_v1 import BaseModel, Field
-from langchain.output_parsers import PydanticOutputParser
+from langchain.chains import create_extraction_chain
 from typing import Dict, List
 from dotenv import load_dotenv
 
