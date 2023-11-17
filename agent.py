@@ -1,6 +1,6 @@
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import create_extraction_chain
-from typing import Dict, List
+from typing import Dict
 from dotenv import load_dotenv
 
 load_dotenv()
