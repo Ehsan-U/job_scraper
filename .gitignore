@@ -5,3 +5,6 @@ Pipfile.lock
 test.json
 .idea/
 __pycache__/
+*.zip
+*.mp4
+*.yml
