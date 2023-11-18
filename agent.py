@@ -12,7 +12,7 @@ class Agent:
     A class that represents an agent that can extract job information from a given HTML page using OpenAI API.
     """
 
-    schema = {
+    schema: Dict = {
         "properties": {
             "job_title": {"type": "string"},
             "job_description": {"type": "string"},

@@ -71,10 +71,14 @@ class Crawler:
         """
         try:
             with sync_playwright() as play:
-                page = play.firefox.launch(headless=self.headless).new_page()
+                browser = play.firefox.launch(headless=self.headless)
+                page = browser.new_page()
                 page.route("**/*", lambda route: route.abort() if route.request.resource_type == "image"  else route.continue_())
                 page.goto(url, timeout=self.timeout)
+                page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                page.wait_for_timeout(self.timeout)
                 content = page.content()
+                page.close()
             return Response(status_code=200, text=content)
         except Exception as e:
             raise e
