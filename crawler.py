@@ -1,8 +1,7 @@
-from tenacity import wait_exponential, retry
-from lxml.html.clean import Cleaner
-from lxml.html import fromstring, tostring
+from tenacity import wait_exponential, retry, stop_after_attempt
 from playwright.sync_api import sync_playwright
 from dataclasses import dataclass
+
 
 from logger import logger
 
@@ -11,6 +10,7 @@ from logger import logger
 class Response:
     status_code: int
     text: str
+    url: str
 
 
 
@@ -27,38 +27,7 @@ class Crawler:
         self.headless = headless
 
 
-    def clean(self, response: Response) -> str:
-        """
-        Cleans the HTML content of a response object by removing unwanted tags.
-
-        Args:
-            response: The response object containing the HTML content to be cleaned.
-
-        Returns:
-            str: The cleaned text content of the HTML.
-        """
-        if response:
-            html = fromstring(response.text)
-
-            cleaner = Cleaner()
-            cleaner.javascript = True
-            cleaner.scripts = True
-            cleaner.comments = True
-            cleaner.style = True
-            cleaner.remove_tags = ['svg', 'img']
-
-            html = cleaner.clean_html(html)
-
-            body_elements = html.xpath("//body")
-            if body_elements:
-                return tostring(body_elements[0], method="html", encoding="unicode", pretty_print=True)
-            else:
-                return ""
-        else:
-            return ""
-
-
-    @retry(wait=wait_exponential(multiplier=1, min=4, max=10))
+    @retry(wait=wait_exponential(multiplier=1, min=4, max=10), stop=stop_after_attempt(3))
     def fetch(self, url: str) -> Response:
         """
         Fetches the content of the given URL using the session object.
@@ -73,13 +42,13 @@ class Crawler:
             with sync_playwright() as play:
                 browser = play.firefox.launch(headless=self.headless)
                 page = browser.new_page()
-                page.route("**/*", lambda route: route.abort() if route.request.resource_type == "image"  else route.continue_())
+                page.route("**/*", lambda route: route.abort() if route.request.resource_type == "image" else route.continue_())
                 page.goto(url, timeout=self.timeout)
                 page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
                 page.wait_for_timeout(self.timeout)
                 content = page.content()
                 page.close()
-            return Response(status_code=200, text=content)
+            return Response(status_code=200, text=content, url=url)
         except Exception as e:
             raise e
 
@@ -93,8 +62,7 @@ class Crawler:
         for url in urls:
             logger.info(f"Processing: {url}")
             response = self.fetch(url)
-            body = self.clean(response)
-            yield url, body
+            yield response
 
 
 
