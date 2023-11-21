@@ -1,5 +1,6 @@
 import pymysql.cursors
 from typing import List, Tuple
+import datetime
 
 
 
@@ -20,7 +21,7 @@ class DB:
 
     """
 
-    def __init__(self, server: str, user: str, password: str, db: str) -> None:
+    def __init__(self, server: str, user: str, password: str, db: str, max_age: int = 2) -> None:
         """
         Initializes the DB object and establishes a database connection.
 
@@ -42,20 +43,68 @@ class DB:
             cursorclass=pymysql.cursors.DictCursor
         )
         self.cursor = self.connection.cursor()
+        self.max_age = max_age
 
 
-    def get_urls(self):
+    def get_urls(self, table: str) -> List:
         """
-        Placeholder method for retrieving URLs from the database.
+        retrieving URLs from the database.
 
         Returns:
             None
 
         """
-        pass
+        query = f"""
+            SELECT url FROM {table};
+        """
+        self.cursor.execute(query)
+        return [item.get("url") for item in self.cursor.fetchall() if item.get("url")]
 
 
-    def insert(self, data: List[Tuple], table: str) -> None:
+    def lookup(self, url: str, table: str) -> bool:
+        """
+        checking if a URL exists in the database.
+
+        Args:
+            url: The URL to check for in the database.
+
+        Returns:
+            True if the URL exists in the database and not older than max_age, False otherwise.
+
+        """
+        query = f"""
+            SELECT source, scraping_end_time  FROM {table}
+            WHERE source = '{url}';
+        """
+        self.cursor.execute(query)
+        exist = self.cursor.fetchone()
+        if exist:
+            last_time_scraped = exist.get("scraping_end_time")
+            return (datetime.datetime.now() - last_time_scraped).days <= self.max_age
+        else:
+            return False            
+
+
+    def delete_if_exists(self, table: str, key: str) -> None:
+        """
+        Deletes a row from the specified table if it exists, based on the given key.
+
+        Args:
+            table (str): The name of the table to delete from.
+            key (str): The key to identify the row to be deleted.
+
+        Returns:
+            None
+        """
+        drop_query = f"""
+            DELETE FROM {table}
+            WHERE source = '{key}';
+        """
+        self.cursor.execute(drop_query)
+        self.connection.commit()
+
+
+    def insert(self, data: List[Tuple], table: str, duplicates_key: str) -> None:
         """
         Inserts data into the specified table in the database.
 
@@ -81,6 +130,9 @@ class DB:
         """
         self.cursor.execute(table_creation_sql)
         self.connection.commit()
+
+        self.delete_if_exists(table, duplicates_key)
+
         insert_sql = f"""INSERT INTO {table} 
             (
             client_id, 

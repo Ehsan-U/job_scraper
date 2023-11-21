@@ -6,9 +6,12 @@ from langchain.docstore.document import Document
 from langchain.callbacks import get_openai_callback
 from typing import Dict, List
 from dotenv import load_dotenv
+import logging
 
 from crawler import Response
 load_dotenv()
+logging.getLogger("langchain").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
 class Agent:

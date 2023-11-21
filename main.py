@@ -6,29 +6,29 @@ import random
 
 
 
-# List of websites to scrape job data from
-websites = [
-    "https://greywise.nl/werken-bij/",
-    "https://tech4you.nl/vacatures/",
-    "https://www.flexcoaches.com/vacatures/"
-]
-
-# Agent setup for job information extraction using a specific AI model
-job_agent = Agent(
-    model="gpt-3.5-turbo-1106",  # AI model identifier
-    organization="org-8Y92VdA7tV3akhIJIG5eFOI4",  # Organization ID under which the model operates
-)
-
-# Initialize a crawler for website scraping
-crawler = Crawler()
 
 # Setup for the MySQL database connection
 mysql = DB(
     server="localhost",
     user="user",
     password="pass",
-    db="jobs"
+    db="jobs",
+    max_age = 2         # days
 )
+# List of websites to scrape job data from
+websites = mysql.get_urls(table="urls")
+
+
+# Initialize agent for job information extraction using a specific AI model
+job_agent = Agent(
+    model="gpt-3.5-turbo-1106",  # AI model identifier
+    organization="org-8Y92VdA7tV3akhIJIG5eFOI4",  # Organization ID under which the model operates
+)
+
+
+# Initialize crawler for website scraping
+crawler = Crawler(mysql)
+
 
 # Iterate over websites to scrape job data
 for response in crawler.crawl(websites):
@@ -56,5 +56,6 @@ for response in crawler.crawl(websites):
     ]
 
     # Insert the job records into the 'jobs' table of the database
-    mysql.insert(records, table="jobs")
+    mysql.insert(records, table="jobs", duplicates_key=response.url)
+    
 
