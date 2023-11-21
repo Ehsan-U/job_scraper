@@ -70,7 +70,7 @@ class Agent:
             page (str): The HTML page to extract job information from.
 
         Returns:
-            Dict: A dictionary containing the extracted job information.
+            List: A list of dictionaries containing the extracted jobs information.
         """
         text = self.clean(response)
 

@@ -3,11 +3,12 @@ from crawler import Crawler
 from db import DB
 import datetime
 import random
-from logger import logger
+
 
 
 # List of websites to scrape job data from
 websites = [
+    "https://greywise.nl/werken-bij/",
     "https://tech4you.nl/vacatures/",
     "https://www.flexcoaches.com/vacatures/"
 ]

@@ -1,0 +1,7 @@
+langchain
+tiktoken
+html2text
+python-dotenv
+tenacity
+playwright
+pymysql
