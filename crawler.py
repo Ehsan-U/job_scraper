@@ -76,7 +76,7 @@ class Crawler:
                     response = self.fetch(url)
                     yield response
                 else:
-                    logger.info("URL already exists in the database.")
+                    logger.info(f"Skipped (already exists): {url}")
 
 
 
