@@ -146,7 +146,7 @@ class DB:
             scraping_start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
             scraping_end_time TIMESTAMP,
             job_page_url VARCHAR(255),
-            source VARCHAR(255),
+            source VARCHAR(255)
             )
             """
         self.cursor.execute(table_creation_sql)
@@ -163,7 +163,7 @@ class DB:
             scraping_start_time,
             scraping_end_time,
             job_page_url,
-            source,
+            source
             ) 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
