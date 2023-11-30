@@ -16,7 +16,7 @@ class Response:
 
 class Crawler:
 
-    def __init__(self, mysql: DB, headless: bool = True, timeout: int = 10):
+    def __init__(self, mysql: DB, headless: bool = True, timeout: int = 20):
             """
             Initializes the Crawler object.
 
