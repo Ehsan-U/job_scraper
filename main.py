@@ -3,6 +3,7 @@ from crawler import Crawler
 from db import DB
 import datetime
 import random
+from urllib.parse import urljoin
 
 
 # Setup for the MySQL database connection
@@ -28,6 +29,14 @@ job_agent = Agent(
 crawler = Crawler(mysql)
 
 
+def make_abs_url(base, url):
+    if url:
+        if url.startswith("http"):
+            return url
+        else:
+            return urljoin(base, url)
+
+
 # Iterate over websites to scrape job data
 for response in crawler.crawl(websites):
     # Record the start time of the scraping process
@@ -48,7 +57,7 @@ for response in crawler.crawl(websites):
             job["token_cost"],         # Associated cost in tokens for the job
             start_time,                # Scraping process start time
             end_time,                  # Scraping process end time
-            job.get("job_page_absolute_url",''),       # Extracted job page url
+            make_abs_url(response.url, job.get("job_page_url",'')),       # Extracted job page url
             response.url               # Source of the job
         )
         for job in jobs  # Loop through each job extracted

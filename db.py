@@ -82,7 +82,7 @@ class DB:
                 token_cost VARCHAR(255), 
                 scraping_start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
                 scraping_end_time TIMESTAMP,
-                job_page_absolute_url VARCHAR(255),
+                job_page_url VARCHAR(255),
                 source VARCHAR(255)
                 )
                 """
@@ -145,7 +145,7 @@ class DB:
             token_cost VARCHAR(255), 
             scraping_start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
             scraping_end_time TIMESTAMP,
-            job_page_absolute_url VARCHAR(255),
+            job_page_url VARCHAR(255),
             source VARCHAR(255)
             )
             """
@@ -162,7 +162,7 @@ class DB:
             token_cost,
             scraping_start_time,
             scraping_end_time,
-            job_page_absolute_url,
+            job_page_url,
             source
             ) 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
