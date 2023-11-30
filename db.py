@@ -176,7 +176,10 @@ class DB:
             None
 
         """
-        self.connection.close()
+        try:
+            self.connection.close()
+        except Exception:
+            pass
 
 
     def __del__(self):
