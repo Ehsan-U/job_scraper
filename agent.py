@@ -22,9 +22,10 @@ class Agent:
     schema: Dict = {
         "properties": {
             "job_title": {"type": "string"},
-            "job_description": {"type": "string"}
+            "job_description": {"type": "string"},
+            "job_page_url": {"type": "string"},
         },
-        "required": ["job_title", "job_description"],
+        "required": ["job_title", "job_description", "job_page_url"],
     }
 
     def __init__(self, model: str = "gpt-3.5-turbo", organization: str = None, temperature: float = 0.0):
@@ -56,7 +57,7 @@ class Agent:
             str: The cleaned text content of the HTML.
         """
         if response:
-            html2text_obj = Html2TextTransformer()
+            html2text_obj = Html2TextTransformer(ignore_links=False)
             docs = html2text_obj.transform_documents([
                 Document(page_content=response.text, metadata={"source": response.url})
             ])
