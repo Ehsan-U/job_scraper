@@ -45,10 +45,10 @@ for response in crawler.crawl(websites):
             random.randint(1, 99999),  # Random ID for the job record
             job["job_title"],          # Extracted job title
             job["job_description"],    # Extracted job description
-            job["job_page_url"],       # Extracted job page url
             job["token_cost"],         # Associated cost in tokens for the job
             start_time,                # Scraping process start time
             end_time,                  # Scraping process end time
+            job["job_page_url"],       # Extracted job page url
             response.url               # Source of the job
         )
         for job in jobs  # Loop through each job extracted
