@@ -5,8 +5,6 @@ import datetime
 import random
 
 
-
-
 # Setup for the MySQL database connection
 mysql = DB(
     server="localhost",

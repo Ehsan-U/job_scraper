@@ -72,17 +72,36 @@ class DB:
             True if the URL exists in the database and not older than max_age, False otherwise.
 
         """
-        query = f"""
-            SELECT source, scraping_end_time  FROM {table}
-            WHERE source = '{url}';
-        """
-        self.cursor.execute(query)
-        exist = self.cursor.fetchone()
-        if exist:
-            last_time_scraped = exist.get("scraping_end_time")
-            return (datetime.datetime.now() - last_time_scraped).days <= self.max_age
-        else:
-            return False            
+        try:
+            table_creation_sql = f"""CREATE TABLE IF NOT EXISTS {table} 
+                (
+                id INT AUTO_INCREMENT PRIMARY KEY, 
+                client_id INT, 
+                title VARCHAR(255), 
+                description TEXT, 
+                token_cost VARCHAR(255), 
+                scraping_start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                scraping_end_time TIMESTAMP,
+                source VARCHAR(255)
+                )
+                """
+            self.cursor.execute(table_creation_sql)
+            self.connection.commit()
+
+            query = f"""
+                SELECT source, scraping_end_time  FROM {table}
+                WHERE source = '{url}';
+            """
+            self.cursor.execute(query)
+            exist = self.cursor.fetchone()
+            if exist:
+                last_time_scraped = exist.get("scraping_end_time")
+                return (datetime.datetime.now() - last_time_scraped).days <= self.max_age
+            else:
+                return False  
+        except Exception:
+            return False
+                  
 
 
     def delete_if_exists(self, table: str, key: str) -> None:
@@ -127,7 +146,7 @@ class DB:
             scraping_end_time TIMESTAMP,
             source VARCHAR(255)
             )
-        """
+            """
         self.cursor.execute(table_creation_sql)
         self.connection.commit()
 
