@@ -48,7 +48,7 @@ for response in crawler.crawl(websites):
             job["token_cost"],         # Associated cost in tokens for the job
             start_time,                # Scraping process start time
             end_time,                  # Scraping process end time
-            job.get("job_page_url",''),       # Extracted job page url
+            job.get("job_page_absolute_url",''),       # Extracted job page url
             response.url               # Source of the job
         )
         for job in jobs  # Loop through each job extracted

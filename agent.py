@@ -23,9 +23,9 @@ class Agent:
         "properties": {
             "job_title": {"type": "string"},
             "job_description": {"type": "string"},
-            "job_page_url": {"type": "string"},
+            "job_page_absolute_url": {"type": "string"},
         },
-        "required": ["job_title", "job_description", "job_page_url"],
+        "required": ["job_title", "job_description", "job_page_absolute_url"],
     }
 
     def __init__(self, model: str = "gpt-3.5-turbo", organization: str = None, temperature: float = 0.0):
@@ -61,7 +61,7 @@ class Agent:
             docs = html2text_obj.transform_documents([
                 Document(page_content=response.text, metadata={"source": response.url})
             ])
-            return docs[0].page_content
+            return docs[0].page_content + ' ' + response.url 
         else:
             return ""
 
