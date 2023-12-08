@@ -8,7 +8,7 @@ from typing import Dict, List
 from dotenv import load_dotenv
 import logging
 
-from crawler import Response
+from src.crawler import Response
 load_dotenv()
 logging.getLogger("langchain").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)

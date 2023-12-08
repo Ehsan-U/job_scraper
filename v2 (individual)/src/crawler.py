@@ -1,9 +1,9 @@
 from tenacity import wait_exponential, retry, stop_after_attempt
 from playwright.sync_api import sync_playwright
 from dataclasses import dataclass
-from db import DB
+from src.db import DB
 
-from logger import logger
+from src.logger import logger
 
 
 @dataclass
@@ -70,7 +70,7 @@ class Crawler:
                 Response: The response object for each crawled URL.
             """
             for url in urls:
-                exists_or_expired = self.mysql.lookup(url, table="jobs")
+                exists_or_expired = self.mysql.lookup(url, table="individual")
                 if not exists_or_expired:
                     logger.info(f"Processing: {url}")
                     response = self.fetch(url)

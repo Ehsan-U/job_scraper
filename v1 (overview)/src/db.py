@@ -104,7 +104,6 @@ class DB:
             return False
                   
 
-
     def delete_if_exists(self, table: str, key: str) -> None:
         """
         Deletes a row from the specified table if it exists, based on the given key.
