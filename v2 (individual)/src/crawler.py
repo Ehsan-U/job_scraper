@@ -69,14 +69,15 @@ class Crawler:
             Yields:
                 Response: The response object for each crawled URL.
             """
-            for client_id, url in urls.items():
-                exists_or_expired = self.mysql.lookup(url, table="individual")
+            for url in urls:
+                client_id, value = url.items()
+                exists_or_expired = self.mysql.lookup(value, table="individual")
                 if not exists_or_expired:
-                    logger.info(f"Processing: {url}")
-                    response = self.fetch(url)
+                    logger.info(f"Processing: {value}")
+                    response = self.fetch(value)
                     yield client_id, response
                 else:
-                    logger.info(f"Skipped (already exists): {url}")
+                    logger.info(f"Skipped (already exists): {value}")
 
 
 
