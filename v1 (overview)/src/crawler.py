@@ -70,9 +70,10 @@ class Crawler:
                 Response: The response object for each crawled URL.
             """
             for url in urls:
-                if url is None:
+                client_id = url.get("client_id")
+                value = url.get("url")
+                if value is None:
                      continue
-                client_id, value = url.items()
                 exists_or_expired = self.mysql.lookup(value, table="overview")
                 if not exists_or_expired:
                     logger.info(f"Processing: {value}")
