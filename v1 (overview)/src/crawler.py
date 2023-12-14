@@ -70,7 +70,6 @@ class Crawler:
                 Response: The response object for each crawled URL.
             """
             for url in urls:
-                print(url)
                 if url is None:
                      continue
                 client_id, value = url.items()
