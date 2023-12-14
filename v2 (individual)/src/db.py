@@ -55,7 +55,7 @@ class DB:
 
         """
         query = f"""
-            SELECT job_page_url FROM {table};
+            SELECT client_id, job_page_url FROM {table};
         """
         self.cursor.execute(query)
         return [{item.get("client_id"): item.get("job_page_url")} for item in self.cursor.fetchall() if item.get("job_page_url")]
