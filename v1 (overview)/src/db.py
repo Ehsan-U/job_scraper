@@ -58,6 +58,7 @@ class DB:
             SELECT url FROM {table};
         """
         self.cursor.execute(query)
+        print(self.cursor.fetchall())
         return [{item.get("client_id"): item.get("url")} for item in self.cursor.fetchall() if item.get("url")]
 
 
