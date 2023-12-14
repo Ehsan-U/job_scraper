@@ -58,7 +58,7 @@ class DB:
             SELECT job_page_url FROM {table};
         """
         self.cursor.execute(query)
-        return [item.get("job_page_url") for item in self.cursor.fetchall() if item.get("job_page_url")]
+        return [{item.get("client_id"): item.get("job_page_url")} for item in self.cursor.fetchall() if item.get("job_page_url")]
 
 
     def lookup(self, url: str, table: str) -> bool:

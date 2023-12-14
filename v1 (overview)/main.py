@@ -42,7 +42,7 @@ def run_job():
     crawler = Crawler(mysql)
 
     # Iterate over websites to scrape job data
-    for response in crawler.crawl(websites):
+    for client_id, response in crawler.crawl(websites):
         # Record the start time of the scraping process
         start_time = datetime.datetime.now()
 
@@ -55,7 +55,7 @@ def run_job():
         # Prepare job records for database insertion
         records = [
             (
-                random.randint(1, 99999),  # Random ID for the job record
+                client_id,  # Random ID for the job record
                 job["job_title"],          # Extracted job title
                 job["job_description"],    # Extracted job description
                 job["token_cost"],         # Associated cost in tokens for the job
